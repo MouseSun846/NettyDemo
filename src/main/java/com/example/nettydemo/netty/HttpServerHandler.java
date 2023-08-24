@@ -17,6 +17,11 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 
 public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+    private ImageEventHandler imageEventHandler;
+    public void registerImageHandler(ImageEventHandler handler) {
+        imageEventHandler = handler;
+    }
+
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest req) throws Exception {
         System.out.println(Thread.currentThread().getId());
@@ -74,24 +79,28 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         System.out.println(ctx.channel().remoteAddress());
         System.out.println("channelRegistered");
+        imageEventHandler.handle("channelRegistered");
     }
 
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         System.out.println(ctx.channel().remoteAddress());
         System.out.println("channelUnregistered");
+        imageEventHandler.handle("channelUnregistered");
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println(ctx.channel().remoteAddress());
         System.out.println("channelActive");
+        imageEventHandler.handle("channelActive");
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         System.out.println(ctx.channel().remoteAddress());
         System.out.println("channelInactive");
+        imageEventHandler.handle("channelInactive");
     }
 
     @Override

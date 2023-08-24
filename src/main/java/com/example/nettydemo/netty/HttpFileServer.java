@@ -29,11 +29,15 @@ public class HttpFileServer {
         mainGroup = new NioEventLoopGroup();
         subGroup = new NioEventLoopGroup();
         server = new ServerBootstrap();
+        HttpFileServerInitialzer httpFileServerInitialzer = new HttpFileServerInitialzer();
+        httpFileServerInitialzer.registerImageHandler((imageProcessingInfo)->{
+            System.out.println("info="+imageProcessingInfo);
+        });
         server.group(mainGroup, subGroup)
                 .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_BACKLOG, 255 * 255)
                 .childOption(ChannelOption.SO_RCVBUF, 1024 * 1024)
-                .childHandler(new HttpFileServerInitialzer());
+                .childHandler(httpFileServerInitialzer);
         // Netty的资源泄露探测器
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.ADVANCED);
     }

@@ -9,6 +9,10 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
 public class HttpFileServerInitialzer extends ChannelInitializer<SocketChannel> {
+    private ImageEventHandler imageEventHandler;
+    public void registerImageHandler(ImageEventHandler handler) {
+        imageEventHandler = handler;
+    }
     @Override
     protected void initChannel(SocketChannel ch) {
         ChannelPipeline pipeline = ch.pipeline();
@@ -21,6 +25,8 @@ public class HttpFileServerInitialzer extends ChannelInitializer<SocketChannel> 
         // 几乎在netty中的编程，都会使用到此hanler
         pipeline.addLast(new HttpObjectAggregator(10240*10240));
         pipeline.addLast(new HttpResponseEncoder());
-        pipeline.addLast(new HttpServerHandler());
+        HttpServerHandler httpServerHandler = new HttpServerHandler();
+        httpServerHandler.registerImageHandler(imageEventHandler);
+        pipeline.addLast(httpServerHandler);
     }
 }
